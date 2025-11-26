@@ -1,4 +1,4 @@
-Productivity & Digital Well-Being App
+Productivity & Digital Well-Being App:
 
 React + Tailwind CSS + Capacitor (iOS & Android)
 Featuring: Native Alarms, Habit Tracking, Pomodoro Timer, Screen-Time Monitoring
