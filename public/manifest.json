@@ -1,0 +1,42 @@
+{
+  "name": "FocusFlow",
+  "short_name": "FocusFlow",
+  "description": "Productivity & Digital Well-Being App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Add Task",
+      "url": "/tasks?action=add",
+      "description": "Create a new task"
+    },
+    {
+      "name": "Start Timer",
+      "url": "/timer",
+      "description": "Start a Pomodoro session"
+    }
+  ]
+}
