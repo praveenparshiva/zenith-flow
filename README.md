@@ -1,25 +1,27 @@
-📱 Productivity & Digital Well-Being App
+Productivity & Digital Well-Being App
 
 React + Tailwind CSS + Capacitor (iOS & Android)
 Featuring: Native Alarms, Habit Tracking, Pomodoro Timer, Screen-Time Monitoring
 
 🚀 Overview
 
-This project is a mobile-first productivity and digital-wellbeing app built with:
+This project is a mobile-first productivity and digital-wellbeing application built using:
 
 React + TypeScript
 
 Tailwind CSS
 
-Capacitor (Android & iOS native builds)
+Capacitor (for iOS & Android native builds)
 
-Custom Native Alarm Plugin (Android AlarmManager + iOS UNUserNotificationCenter)
+Custom Native Alarm Plugin
+
+Android AlarmManager
+
+iOS UNUserNotificationCenter
 
 IndexedDB + Capacitor Storage for offline persistence
 
-The app supports reliable native alarms that fire even when the app is closed, background execution, screen-time tracking, Pomodoro timers, and a habit-tracking dashboard.
-
-This README provides setup instructions, build steps, testing flows, and verification procedures.
+The app supports reliable native alarms that trigger even when the app is closed, background execution, screen-time tracking, Pomodoro timers, habit streaks, and a rich dashboard.
 
 📁 Project Structure
 root/
@@ -60,9 +62,9 @@ Multiple alarms per task
 
 Priority, notes, categories
 
-Swipeable task rows
-
 Slide-up modal for add/edit
+
+Swipeable task rows
 
 Offline-first (IndexedDB + Capacitor Storage)
 
@@ -70,11 +72,11 @@ Offline-first (IndexedDB + Capacitor Storage)
 
 Alarms work even when:
 ✔ App is closed/killed
-✔ Phone screen is off
+✔ Screen is off
 ✔ Device is in Doze mode
 ✔ After reboot
 
-Technologies used:
+Technologies:
 
 Capacitor Local Notifications
 
@@ -84,31 +86,33 @@ Android AlarmManager (custom plugin)
 
 iOS UNUserNotificationCenter
 
+Features:
+
 Snooze support
 
-Custom sound + vibration
+Custom alarm sound & vibration
 
 Daily repeating alarms
 
 🕒 3. Background Execution
 
-Periodic check for missed/rescheduled alarms
+Periodic check for missed alarms
 
-BootReceiver for Android
+Android BootReceiver for rescheduling
 
-Re-register alarms after app or OS restart
+Auto re-register alarms after restart
 
 📊 4. Digital Well-Being
 
-Screen-time tracking (daily & weekly)
+Daily & weekly screen-time tracking
 
-Alerts at 5h, 6h, 7h, and pre-warnings
+Alerts at 5h, 6h, 7h + pre-warnings
 
 Pomodoro timer
 
-Habit streaks, badges
+Habit streaks & badges
 
-Dashboard with upcoming alarms & progress
+Upcoming alarms dashboard
 
 🌙 5. UI & UX
 
@@ -127,29 +131,26 @@ npm install
 2️⃣ Initialize Capacitor
 npx cap init
 
-3️⃣ Copy Web Build to Native
+3️⃣ Build Web App & Copy to Native
 npm run build
 npx cap copy
 
-4️⃣ Install Required Capacitor Plugins
+4️⃣ Install Required Plugins
 npm install @capacitor/local-notifications
 npm install @capacitor/storage
 npm install @capacitor/background-task
 npm install idb
 
 
-Include the native alarm plugin:
-
+Include custom plugin:
 plugins/native-alarm
 
+
 📱 Running on Android
-Open in Android Studio
+Open Project
 npx cap open android
 
-Required Manifest Permissions
-
-Add to AndroidManifest.xml:
-
+Add Permissions (AndroidManifest.xml)
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 <uses-permission android:name="android.permission.WAKE_LOCK"/>
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
@@ -157,20 +158,19 @@ Add to AndroidManifest.xml:
 
 Build APK
 
-Inside Android Studio → Build > Make Project
+Android Studio → Build > Make Project
 
 🍎 Running on iOS
-Open Xcode
+Open in Xcode
 npx cap open ios
 
 Add to Info.plist
 <key>NSUserNotificationUsageDescription</key>
 <string>This app schedules important alarms and reminders.</string>
 
-Build & Run
+Build
 
-Use Xcode > Product > Run
-(Requires Apple Developer account for device testing)
+Xcode → Product > Run
 
 🔌 Native Alarm Plugin Setup
 Android
@@ -179,50 +179,47 @@ AlarmManager with setExactAndAllowWhileIdle
 
 BroadcastReceiver for notifications
 
-BootReceiver for rescheduling alarms
+BootReceiver for rescheduling
 
 Foreground service fallback
 
 iOS
 
-UNUserNotificationCenter exact scheduling
+UNUserNotificationCenter exact notifications
 
 Background refresh for rescheduling
 
-Handling for notification categories (snooze/action buttons)
+Notification actions (e.g., Snooze)
 
 🧪 Testing & QA Instructions
-
-All critical features must be verified.
-
 A. Alarm Tests (MANDATORY)
 Test 1 — App Killed
 
-Schedule alarm for +2 minutes
+Schedule alarm (+2 min)
 
-Force-stop the app
+Force-stop app
 
-Screen off
+Turn off screen
 
-Alarm MUST fire at exact time
+Alarm must fire exactly on time
 
 Test 2 — Device Reboot
 
 Schedule alarm
 
-Reboot phone
+Reboot device
 
-Alarm MUST fire
+Alarm must fire after boot
 
 Test 3 — Snooze
 
-Click Snooze
+Tap Snooze
 
-Alarm must re-trigger after configured delay
+Alarm must re-trigger after delay
 
 Output required:
 
-Logs (adb logcat, iOS device logs)
+Logs (adb logcat, iOS logs)
 
 Screenshots/video
 
@@ -233,7 +230,7 @@ Simulate usage:
 npm run simulate:time
 
 
-Verify notifications at:
+Verify alerts at:
 
 5 hours
 
@@ -245,9 +242,9 @@ Pre-warnings
 
 C. Background Execution
 
-Alarm reschedules after app restart
+Alarms reschedule after app restart
 
-BackgroundTask runs periodic checks
+BackgroundTask performs periodic checks
 
 D. PWA Offline Tests
 
@@ -255,28 +252,23 @@ Disable internet
 
 Add/edit tasks
 
-Refresh page
+Refresh
 
-Check local persistence (IndexedDB)
+Ensure IndexedDB persistence
 
 🧰 Development Scripts
-Start Web App
-npm run dev
+npm run dev       # start web app
+npm run build     # build web app
+npx cap sync      # sync with native
 
-Build Web
-npm run build
-
-Sync to Capacitor
-npx cap sync
-
-📦 Build Instructions (Production)
+📦 Production Build
 Android
 npm run build
 npx cap copy android
 npx cap open android
 
 
-Generate release APK/AAB through Android Studio.
+Build APK/AAB via Android Studio.
 
 iOS
 npm run build
@@ -284,48 +276,45 @@ npx cap copy ios
 npx cap open ios
 
 
-Archive in Xcode → Upload to TestFlight.
+Archive → Upload to TestFlight.
 
 🔐 Permissions & Privacy
 
-App requests:
+App may request:
 
 Notification permissions
 
 WAKE_LOCK
 
-Exact alarm permissions
+Exact alarm permission
 
 Background execution
 
-No personal data is transmitted unless backend (optional) is configured.
+No personal data is transmitted unless backend is added.
 
 🧭 Troubleshooting
-❗ Alarm not firing on some Android phones
+❗ Android Alarm Not Firing
 
-Certain OEMs (Xiaomi, Vivo, Samsung) disable background execution.
-Provide the user:
+Some OEMs block background services:
+
+Xiaomi
+
+Vivo
+
+Samsung
+
+Provide:
 
 Battery optimization instructions
 
-Auto-start instructions
+Auto-start permission steps
 
-❗ iOS notifications not appearing
+❗ iOS Notifications Not Showing
 
-Ensure:
+Check:
 
 Notifications allowed
 
-Focus modes not blocking alerts
+Focus modes
 
-🏁 Final Delivery Requirements
-
-This project must ship with:
-
-Full source code (React + native plugins)
-
-Full test suite (unit + integration + device tests)
-
-Final Verification Report
-
-Screenshots/video of alarms firing
+Sound settings
