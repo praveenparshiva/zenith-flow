@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 interface PageHeaderProps {
-  title: string;
+  title: ReactNode;
   subtitle?: string;
   action?: ReactNode;
   showSettings?: boolean;

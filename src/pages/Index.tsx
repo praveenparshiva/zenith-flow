@@ -1,13 +1,15 @@
 import { PageHeader } from '@/components/layout/PageHeader';
 import { QuickStats } from '@/components/dashboard/QuickStats';
-import { ScreenTimeWidget } from '@/components/dashboard/ScreenTimeWidget';
+import { UsageMonitor } from '@/components/dashboard/UsageMonitor';
 import { UpcomingAlarms } from '@/components/dashboard/UpcomingAlarms';
-import { TaskList } from '@/components/tasks/TaskList';
+import { SwipeableTaskCard } from '@/components/tasks/SwipeableTaskCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAppTasks, useAppHabits } from '@/contexts/AppContext';
-import { HabitCard } from '@/components/habits/HabitCard';
-import { ChevronRight, Plus } from 'lucide-react';
+import { EnhancedHabitCard } from '@/components/habits/EnhancedHabitCard';
+import { ChevronRight, Plus, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
@@ -27,63 +29,87 @@ export default function Dashboard() {
     day: 'numeric' 
   });
 
-  const todayHabits = getTodayStatus().filter(h => h.isDueToday).slice(0, 3);
+  const todayHabits = getTodayStatus().filter(h => h.isDueToday).slice(0, 2);
   const pendingDailyTasks = dailyTasks.filter(t => !t.completed).slice(0, 3);
+  const completedTodayCount = dailyTasks.filter(t => t.completed).length;
 
   return (
     <div className="min-h-screen">
       <PageHeader 
-        title={greeting}
+        title={
+          <span className="flex items-center gap-2">
+            {greeting}
+            <Sparkles className="h-5 w-5 text-warning animate-pulse" />
+          </span>
+        }
         subtitle={dateString}
       />
       
-      <div className="p-4 space-y-6">
+      <div className="p-4 pb-24 space-y-5">
         {/* Quick Stats */}
         <QuickStats />
 
-        {/* Screen Time Widget */}
-        <ScreenTimeWidget />
+        {/* Usage Monitor */}
+        <UsageMonitor />
 
         {/* Upcoming Alarms */}
         <UpcomingAlarms />
 
         {/* Today's Tasks */}
-        <Card>
-          <CardHeader className="pb-2 flex-row items-center justify-between">
-            <CardTitle className="text-base">Today's Tasks</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3 flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base font-semibold">Today's Tasks</CardTitle>
+              {completedTodayCount > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success font-medium">
+                  {completedTodayCount} done
+                </span>
+              )}
+            </div>
+            <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
               <Link to="/tasks" className="flex items-center gap-1">
                 View All
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </Button>
           </CardHeader>
-          <CardContent>
-            {pendingDailyTasks.length > 0 ? (
-              <TaskList tasks={pendingDailyTasks} loading={tasksLoading} />
-            ) : (
-              <div className="flex flex-col items-center py-6 text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  {dailyTasks.length > 0 
-                    ? 'All daily tasks completed!' 
-                    : 'No daily tasks yet'}
-                </p>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/tasks">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Task
-                  </Link>
-                </Button>
+          <CardContent className="space-y-3">
+            {tasksLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map((i) => (
+                  <Skeleton key={i} className="h-24 rounded-xl" />
+                ))}
               </div>
+            ) : pendingDailyTasks.length > 0 ? (
+              pendingDailyTasks.map((task) => (
+                <SwipeableTaskCard key={task.id} task={task} />
+              ))
+            ) : (
+              <EmptyState
+                icon={dailyTasks.length > 0 ? '🎉' : '📝'}
+                title={dailyTasks.length > 0 ? 'All done!' : 'No tasks'}
+                description={dailyTasks.length > 0 
+                  ? "You've completed all your daily tasks" 
+                  : 'Add your first daily task'}
+                action={
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/tasks">
+                      <Plus className="h-4 w-4 mr-1" />
+                      {dailyTasks.length > 0 ? 'Add More' : 'Add Task'}
+                    </Link>
+                  </Button>
+                }
+                className="py-8"
+              />
             )}
           </CardContent>
         </Card>
 
         {/* Today's Habits */}
-        <Card>
-          <CardHeader className="pb-2 flex-row items-center justify-between">
-            <CardTitle className="text-base">Today's Habits</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3 flex-row items-center justify-between">
+            <CardTitle className="text-base font-semibold">Today's Habits</CardTitle>
+            <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
               <Link to="/habits" className="flex items-center gap-1">
                 View All
                 <ChevronRight className="h-4 w-4" />
@@ -91,9 +117,15 @@ export default function Dashboard() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
-            {todayHabits.length > 0 ? (
+            {habitsLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map((i) => (
+                  <Skeleton key={i} className="h-32 rounded-xl" />
+                ))}
+              </div>
+            ) : todayHabits.length > 0 ? (
               todayHabits.map(habit => (
-                <HabitCard
+                <EnhancedHabitCard
                   key={habit.id}
                   habit={habit}
                   isCompletedToday={habit.isCompletedToday}
@@ -101,15 +133,20 @@ export default function Dashboard() {
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center py-6 text-center">
-                <p className="text-sm text-muted-foreground mb-3">No habits for today</p>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/habits">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Habit
-                  </Link>
-                </Button>
-              </div>
+              <EmptyState
+                icon="🎯"
+                title="No habits today"
+                description="Create habits to build consistency"
+                action={
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/habits">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Habit
+                    </Link>
+                  </Button>
+                }
+                className="py-8"
+              />
             )}
           </CardContent>
         </Card>
