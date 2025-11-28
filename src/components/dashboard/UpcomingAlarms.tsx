@@ -20,12 +20,11 @@ export function UpcomingAlarms() {
         }))
     )
     .sort((a, b) => {
-      // Sort by time
       const [aHour, aMin] = a.time.split(':').map(Number);
       const [bHour, bMin] = b.time.split(':').map(Number);
       return (aHour * 60 + aMin) - (bHour * 60 + bMin);
     })
-    .slice(0, 5); // Show max 5 upcoming alarms
+    .slice(0, 4);
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -53,8 +52,8 @@ export function UpcomingAlarms() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <BellOff className="h-8 w-8 text-muted-foreground/50 mb-2" />
+          <div className="flex flex-col items-center justify-center py-4 text-center">
+            <BellOff className="h-6 w-6 text-muted-foreground/50 mb-1.5" />
             <p className="text-sm text-muted-foreground">No alarms scheduled</p>
           </div>
         </CardContent>
@@ -75,26 +74,26 @@ export function UpcomingAlarms() {
           <div
             key={`${alarm.taskId}-${alarm.id}`}
             className={cn(
-              'flex items-center justify-between p-3 rounded-lg transition-all',
+              'flex items-center justify-between p-2.5 rounded-lg transition-all',
               isUpcoming(alarm.time) ? 'bg-muted' : 'bg-muted/50 opacity-60'
             )}
           >
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
               <Bell className={cn(
-                'h-4 w-4 flex-shrink-0',
+                'h-3.5 w-3.5 flex-shrink-0',
                 isUpcoming(alarm.time) ? 'text-primary' : 'text-muted-foreground'
               )} />
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="font-medium text-sm truncate">{alarm.taskName}</p>
                 {alarm.repeating && (
-                  <Badge variant="secondary" className="text-2xs mt-0.5">
+                  <Badge variant="secondary" className="text-2xs mt-0.5 h-4">
                     Daily
                   </Badge>
                 )}
               </div>
             </div>
             <span className={cn(
-              'text-sm font-medium tabular-nums flex-shrink-0',
+              'text-sm font-medium tabular-nums flex-shrink-0 ml-2',
               isUpcoming(alarm.time) ? 'text-foreground' : 'text-muted-foreground'
             )}>
               {formatTime(alarm.time)}

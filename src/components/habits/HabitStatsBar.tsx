@@ -11,21 +11,18 @@ export function HabitStatsBar({ currentStreak, longestStreak, weeklyCompletion }
   const stats = [
     {
       icon: Flame,
-      label: 'Streak',
       value: `${currentStreak}d`,
       color: 'text-warning',
       bgColor: 'bg-warning/10',
     },
     {
       icon: Trophy,
-      label: 'Best',
       value: `${longestStreak}d`,
       color: 'text-success',
       bgColor: 'bg-success/10',
     },
     {
       icon: TrendingUp,
-      label: 'Week',
       value: `${Math.round(weeklyCompletion)}%`,
       color: 'text-primary',
       bgColor: 'bg-primary/10',
@@ -33,17 +30,17 @@ export function HabitStatsBar({ currentStreak, longestStreak, weeklyCompletion }
   ];
 
   return (
-    <div className="flex gap-2">
-      {stats.map((stat) => (
+    <div className="flex gap-1.5">
+      {stats.map((stat, i) => (
         <div
-          key={stat.label}
+          key={i}
           className={cn(
-            'flex items-center gap-1.5 px-2 py-1 rounded-lg',
+            'flex items-center gap-1 px-1.5 py-0.5 rounded-md',
             stat.bgColor
           )}
         >
-          <stat.icon className={cn('h-3 w-3', stat.color)} />
-          <span className="text-xs font-semibold text-foreground">{stat.value}</span>
+          <stat.icon className={cn('h-2.5 w-2.5', stat.color)} />
+          <span className="text-2xs font-semibold text-foreground">{stat.value}</span>
         </div>
       ))}
     </div>

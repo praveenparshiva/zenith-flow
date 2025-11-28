@@ -2,13 +2,12 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { WeeklyChart } from '@/components/stats/WeeklyChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAppTasks, useAppHabits, useAppScreenTime, useAppTimer } from '@/contexts/AppContext';
-import { CheckCircle2, Target, Clock, Flame, TrendingUp } from 'lucide-react';
+import { useAppTasks, useAppHabits, useAppTimer } from '@/contexts/AppContext';
+import { CheckCircle2, Target, Flame, TrendingUp } from 'lucide-react';
 
 export default function StatsPage() {
   const { tasks, completedTasks } = useAppTasks();
   const { habits } = useAppHabits();
-  const { todayMinutes, formatMinutes } = useAppScreenTime();
   const { state: timerState } = useAppTimer();
 
   // Calculate overall stats
@@ -38,13 +37,6 @@ export default function StatsPage() {
       color: 'bg-accent/20 text-accent',
     },
     {
-      label: 'Screen Time Today',
-      value: formatMinutes(todayMinutes),
-      subLabel: 'Active time tracked',
-      icon: Clock,
-      color: 'bg-warning/20 text-warning',
-    },
-    {
       label: 'Pomodoro Sessions',
       value: timerState.sessionsCompleted,
       subLabel: 'Focus sessions',
@@ -60,34 +52,28 @@ export default function StatsPage() {
         subtitle="Track your progress"
       />
 
-      <div className="p-4 space-y-6">
+      <div className="px-4 pb-24 space-y-6">
         {/* Overview Stats */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {stats.map((stat) => (
             <Card key={stat.label}>
-              <CardContent className="p-4">
-                <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mb-3`}>
+              <CardContent className="p-3 text-center">
+                <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2`}>
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-                <p className="text-2xs text-muted-foreground mt-1">{stat.subLabel}</p>
+                <p className="text-xl font-bold">{stat.value}</p>
+                <p className="text-2xs text-muted-foreground">{stat.label}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
         {/* Weekly Charts */}
-        <Tabs defaultValue="screenTime">
-          <TabsList className="w-full">
-            <TabsTrigger value="screenTime" className="flex-1">Screen Time</TabsTrigger>
-            <TabsTrigger value="tasks" className="flex-1">Tasks</TabsTrigger>
-            <TabsTrigger value="habits" className="flex-1">Habits</TabsTrigger>
+        <Tabs defaultValue="tasks">
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="habits">Habits</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="screenTime" className="mt-4">
-            <WeeklyChart type="screenTime" />
-          </TabsContent>
 
           <TabsContent value="tasks" className="mt-4">
             <WeeklyChart type="tasks" />
@@ -125,20 +111,11 @@ export default function StatsPage() {
               </div>
             )}
 
-            {todayMinutes > 0 && todayMinutes < 300 && (
-              <div className="p-3 bg-accent/10 rounded-lg">
-                <p className="text-sm font-medium text-accent">⚡ Balanced</p>
-                <p className="text-xs text-muted-foreground">
-                  Healthy screen time today
-                </p>
-              </div>
-            )}
-
-            {stats.every(s => typeof s.value === 'number' && s.value === 0) && (
+            {completionRate < 80 && averageStreak < 7 && (
               <div className="p-3 bg-muted rounded-lg">
-                <p className="text-sm font-medium">📊 Start tracking</p>
+                <p className="text-sm font-medium">📊 Keep going!</p>
                 <p className="text-xs text-muted-foreground">
-                  Add tasks and habits to see your insights here
+                  Build consistency by completing tasks and habits daily
                 </p>
               </div>
             )}
