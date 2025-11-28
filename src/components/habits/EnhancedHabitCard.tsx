@@ -44,9 +44,8 @@ export function EnhancedHabitCard({ habit, isCompletedToday, isDueToday, onEdit 
 
   return (
     <Card 
-      variant="interactive" 
       className={cn(
-        'p-3 animate-scale-in',
+        'p-4 border-0 shadow-soft animate-scale-in',
         isDeleting && 'animate-fade-out opacity-0'
       )}
     >
@@ -58,21 +57,21 @@ export function EnhancedHabitCard({ habit, isCompletedToday, isDueToday, onEdit 
             onClick={handleToggle}
             disabled={!isDueToday}
             className={cn(
-              'flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-lg',
+              'flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-xl',
               'transition-all duration-300 transform',
               isCompletedToday
-                ? 'text-primary-foreground scale-100 shadow-lg'
+                ? 'text-white scale-100'
                 : isDueToday
                   ? 'bg-muted hover:bg-muted/80 hover:scale-105 active:scale-95'
                   : 'bg-muted/50 opacity-50 cursor-not-allowed'
             )}
             style={{ 
               backgroundColor: isCompletedToday ? habit.color : undefined,
-              boxShadow: isCompletedToday ? `0 4px 16px ${habit.color}50` : undefined
+              boxShadow: isCompletedToday ? `0 4px 20px ${habit.color}40` : undefined
             }}
           >
             {isCompletedToday ? (
-              <Check className="h-5 w-5 animate-scale-in" />
+              <Check className="h-6 w-6 animate-check-bounce" />
             ) : (
               habit.icon
             )}
@@ -82,7 +81,7 @@ export function EnhancedHabitCard({ habit, isCompletedToday, isDueToday, onEdit 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground text-sm truncate">{habit.name}</h3>
+                <h3 className="font-semibold text-foreground truncate">{habit.name}</h3>
                 <p className="text-xs text-muted-foreground">
                   {habit.frequency === 'daily' ? 'Every day' : `${habit.targetDays.length} days/week`}
                 </p>
@@ -90,18 +89,18 @@ export function EnhancedHabitCard({ habit, isCompletedToday, isDueToday, onEdit 
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon-sm" className="hover:bg-muted flex-shrink-0 h-7 w-7">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl hover:bg-muted flex-shrink-0">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onEdit?.(habit)}>
+                <DropdownMenuContent align="end" className="rounded-xl">
+                  <DropdownMenuItem onClick={() => onEdit?.(habit)} className="rounded-lg">
                     <Edit2 className="h-4 w-4 mr-2" />
                     Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={handleDelete}
-                    className="text-destructive focus:text-destructive"
+                    className="text-destructive focus:text-destructive rounded-lg"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
@@ -111,7 +110,7 @@ export function EnhancedHabitCard({ habit, isCompletedToday, isDueToday, onEdit 
             </div>
 
             {/* Stats */}
-            <div className="mt-1.5">
+            <div className="mt-2">
               <HabitStatsBar 
                 currentStreak={habit.currentStreak}
                 longestStreak={habit.longestStreak}

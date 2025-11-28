@@ -80,25 +80,33 @@ export default {
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) - 6px)",
         xl: "calc(var(--radius) + 4px)",
         "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "calc(var(--radius) + 12px)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "-apple-system", "sans-serif"],
       },
       fontSize: {
         "2xs": ["0.625rem", { lineHeight: "0.875rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.25rem", fontWeight: "700" }],
+        "4xl": ["2.25rem", { lineHeight: "2.5rem", fontWeight: "800" }],
       },
       spacing: {
         "safe-bottom": "env(safe-area-inset-bottom)",
         "safe-top": "env(safe-area-inset-top)",
+        "18": "4.5rem",
+        "22": "5.5rem",
       },
       boxShadow: {
         "glow-sm": "0 0 10px hsl(var(--primary) / 0.2)",
         "glow-md": "0 0 20px hsl(var(--primary) / 0.3)",
         "glow-lg": "0 0 30px hsl(var(--primary) / 0.4)",
+        "soft": "0 2px 8px -2px hsl(var(--foreground) / 0.08), 0 1px 2px hsl(var(--foreground) / 0.04)",
+        "soft-md": "0 4px 16px -4px hsl(var(--foreground) / 0.1), 0 2px 4px -2px hsl(var(--foreground) / 0.06)",
+        "soft-lg": "0 12px 32px -8px hsl(var(--foreground) / 0.14), 0 4px 8px -4px hsl(var(--foreground) / 0.08)",
       },
       keyframes: {
         "accordion-down": {
