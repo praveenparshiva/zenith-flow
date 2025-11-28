@@ -1,7 +1,6 @@
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
@@ -13,7 +12,6 @@ import {
   Monitor, 
   Volume2, 
   Vibrate, 
-  Clock,
   RotateCcw,
   Info
 } from 'lucide-react';
@@ -36,7 +34,7 @@ export default function SettingsPage() {
         showSettings={false}
       />
 
-      <div className="p-4 space-y-6 pb-24">
+      <div className="px-4 space-y-4 pb-24">
         {/* Theme */}
         <Card>
           <CardHeader className="pb-2">
@@ -86,19 +84,6 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label>Screen Time Warnings</Label>
-                <p className="text-xs text-muted-foreground">Alerts at 5h, 6h, 7h</p>
-              </div>
-              <Switch
-                checked={settings.notifications.screenTimeWarnings}
-                onCheckedChange={(checked) => updateNotificationSettings({ screenTimeWarnings: checked })}
-              />
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div>
                 <Label>Habit Reminders</Label>
                 <p className="text-xs text-muted-foreground">Daily habit check-ins</p>
               </div>
@@ -119,33 +104,6 @@ export default function SettingsPage() {
                 checked={settings.notifications.pomodoroAlerts}
                 onCheckedChange={(checked) => updateNotificationSettings({ pomodoroAlerts: checked })}
               />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Screen Time */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Screen Time Limit
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Label>Daily limit (minutes)</Label>
-              <Input
-                type="number"
-                min={60}
-                max={1440}
-                value={settings.screenTimeLimit}
-                onChange={(e) => updateSettings({ 
-                  screenTimeLimit: parseInt(e.target.value) || 480 
-                })}
-              />
-              <p className="text-xs text-muted-foreground">
-                Current: {Math.floor(settings.screenTimeLimit / 60)}h {settings.screenTimeLimit % 60}m
-              </p>
             </div>
           </CardContent>
         </Card>

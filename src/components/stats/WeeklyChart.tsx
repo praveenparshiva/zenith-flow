@@ -1,25 +1,26 @@
 import { useMemo } from 'react';
-import { useAppScreenTime, useAppTasks, useAppHabits } from '@/contexts/AppContext';
+import { useAppTasks, useAppHabits } from '@/contexts/AppContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-type ChartType = 'screenTime' | 'tasks' | 'habits';
+type ChartType = 'tasks' | 'habits';
 
 interface WeeklyChartProps {
   type: ChartType;
 }
 
 export function WeeklyChart({ type }: WeeklyChartProps) {
-  const { getWeeklyData, formatMinutes } = useAppScreenTime();
   const { tasks } = useAppTasks();
   const { habits } = useAppHabits();
 
   const data = useMemo(() => {
-    const weeklyScreenTime = getWeeklyData();
+    const weekData = [];
+    const today = new Date();
     
-    return weeklyScreenTime.map((day) => {
-      const dayDate = new Date(day.date);
-      const dayStr = day.date;
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toISOString().split('T')[0];
       
       // Count completed tasks for this day
       const tasksCompleted = tasks.filter(t => 
@@ -31,24 +32,18 @@ export function WeeklyChart({ type }: WeeklyChartProps) {
         count + (habit.completions.includes(dayStr) ? 1 : 0), 0
       );
 
-      return {
-        date: dayDate.toLocaleDateString('en', { weekday: 'short' }),
+      weekData.push({
+        date: date.toLocaleDateString('en', { weekday: 'short' }),
         fullDate: dayStr,
-        screenTime: day.minutes,
-        screenTimeFormatted: formatMinutes(day.minutes),
         tasks: tasksCompleted,
         habits: habitsCompleted,
-      };
-    });
-  }, [getWeeklyData, tasks, habits, formatMinutes]);
+      });
+    }
+    
+    return weekData;
+  }, [tasks, habits]);
 
   const config = {
-    screenTime: {
-      title: 'Screen Time',
-      dataKey: 'screenTime',
-      color: 'hsl(var(--chart-1))',
-      formatter: (value: number) => formatMinutes(value),
-    },
     tasks: {
       title: 'Tasks Completed',
       dataKey: 'tasks',

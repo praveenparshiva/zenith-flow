@@ -2,20 +2,17 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useHabits } from '@/hooks/useHabits';
 import { useTimer } from '@/hooks/useTimer';
-import { useScreenTime } from '@/hooks/useScreenTime';
 import { useSettings } from '@/hooks/useSettings';
 
 type TasksContextType = ReturnType<typeof useTasks>;
 type HabitsContextType = ReturnType<typeof useHabits>;
 type TimerContextType = ReturnType<typeof useTimer>;
-type ScreenTimeContextType = ReturnType<typeof useScreenTime>;
 type SettingsContextType = ReturnType<typeof useSettings>;
 
 interface AppContextType {
   tasks: TasksContextType;
   habits: HabitsContextType;
   timer: TimerContextType;
-  screenTime: ScreenTimeContextType;
   settings: SettingsContextType;
 }
 
@@ -25,11 +22,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const tasks = useTasks();
   const habits = useHabits();
   const timer = useTimer();
-  const screenTime = useScreenTime();
   const settings = useSettings();
 
   return (
-    <AppContext.Provider value={{ tasks, habits, timer, screenTime, settings }}>
+    <AppContext.Provider value={{ tasks, habits, timer, settings }}>
       {children}
     </AppContext.Provider>
   );
@@ -54,10 +50,6 @@ export function useAppHabits() {
 
 export function useAppTimer() {
   return useApp().timer;
-}
-
-export function useAppScreenTime() {
-  return useApp().screenTime;
 }
 
 export function useAppSettings() {

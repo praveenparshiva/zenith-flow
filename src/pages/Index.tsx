@@ -1,6 +1,5 @@
 import { PageHeader } from '@/components/layout/PageHeader';
 import { QuickStats } from '@/components/dashboard/QuickStats';
-import { UsageMonitor } from '@/components/dashboard/UsageMonitor';
 import { UpcomingAlarms } from '@/components/dashboard/UpcomingAlarms';
 import { SwipeableTaskCard } from '@/components/tasks/SwipeableTaskCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,45 +44,46 @@ export default function Dashboard() {
         subtitle={dateString}
       />
       
-      <div className="p-4 pb-24 space-y-5">
+      <div className="px-4 pb-24 space-y-4">
         {/* Quick Stats */}
         <QuickStats />
-
-        {/* Usage Monitor */}
-        <UsageMonitor />
 
         {/* Upcoming Alarms */}
         <UpcomingAlarms />
 
         {/* Today's Tasks */}
-        <Card className="overflow-hidden">
-          <CardHeader className="pb-3 flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-base font-semibold">Today's Tasks</CardTitle>
-              {completedTodayCount > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success font-medium">
-                  {completedTodayCount} done
-                </span>
-              )}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base font-semibold">Today's Tasks</CardTitle>
+                {completedTodayCount > 0 && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success font-medium">
+                    {completedTodayCount} done
+                  </span>
+                )}
+              </div>
+              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
+                <Link to="/tasks" className="flex items-center gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
-            <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
-              <Link to="/tasks" className="flex items-center gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
           </CardHeader>
           <CardContent className="space-y-3">
             {tasksLoading ? (
               <div className="space-y-3">
                 {[1, 2].map((i) => (
-                  <Skeleton key={i} className="h-24 rounded-xl" />
+                  <Skeleton key={i} className="h-20 rounded-xl" />
                 ))}
               </div>
             ) : pendingDailyTasks.length > 0 ? (
-              pendingDailyTasks.map((task) => (
-                <SwipeableTaskCard key={task.id} task={task} />
-              ))
+              <div className="space-y-3">
+                {pendingDailyTasks.map((task) => (
+                  <SwipeableTaskCard key={task.id} task={task} />
+                ))}
+              </div>
             ) : (
               <EmptyState
                 icon={dailyTasks.length > 0 ? '🎉' : '📝'}
@@ -99,39 +99,43 @@ export default function Dashboard() {
                     </Link>
                   </Button>
                 }
-                className="py-8"
+                className="py-6"
               />
             )}
           </CardContent>
         </Card>
 
         {/* Today's Habits */}
-        <Card className="overflow-hidden">
-          <CardHeader className="pb-3 flex-row items-center justify-between">
-            <CardTitle className="text-base font-semibold">Today's Habits</CardTitle>
-            <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
-              <Link to="/habits" className="flex items-center gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-semibold">Today's Habits</CardTitle>
+              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
+                <Link to="/habits" className="flex items-center gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             {habitsLoading ? (
               <div className="space-y-3">
                 {[1, 2].map((i) => (
-                  <Skeleton key={i} className="h-32 rounded-xl" />
+                  <Skeleton key={i} className="h-28 rounded-xl" />
                 ))}
               </div>
             ) : todayHabits.length > 0 ? (
-              todayHabits.map(habit => (
-                <EnhancedHabitCard
-                  key={habit.id}
-                  habit={habit}
-                  isCompletedToday={habit.isCompletedToday}
-                  isDueToday={habit.isDueToday}
-                />
-              ))
+              <div className="space-y-3">
+                {todayHabits.map(habit => (
+                  <EnhancedHabitCard
+                    key={habit.id}
+                    habit={habit}
+                    isCompletedToday={habit.isCompletedToday}
+                    isDueToday={habit.isDueToday}
+                  />
+                ))}
+              </div>
             ) : (
               <EmptyState
                 icon="🎯"
@@ -145,7 +149,7 @@ export default function Dashboard() {
                     </Link>
                   </Button>
                 }
-                className="py-8"
+                className="py-6"
               />
             )}
           </CardContent>
