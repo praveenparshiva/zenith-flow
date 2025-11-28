@@ -12,7 +12,6 @@ import {
   Edit2,
   Play,
   Check,
-  X,
   AlarmClock
 } from 'lucide-react';
 import {
@@ -32,11 +31,11 @@ interface SwipeableTaskCardProps {
   onAlarmSchedule?: (task: Task) => void;
 }
 
-const priorityColors: Record<Task['priority'], string> = {
-  low: 'bg-muted text-muted-foreground',
-  medium: 'bg-accent/20 text-accent',
-  high: 'bg-warning/20 text-warning',
-  urgent: 'bg-destructive/20 text-destructive',
+const priorityConfig: Record<Task['priority'], { bg: string; text: string; label: string }> = {
+  low: { bg: 'bg-muted', text: 'text-muted-foreground', label: 'Low' },
+  medium: { bg: 'bg-accent/15', text: 'text-accent', label: 'Medium' },
+  high: { bg: 'bg-warning/15', text: 'text-warning', label: 'High' },
+  urgent: { bg: 'bg-destructive/15', text: 'text-destructive', label: 'Urgent' },
 };
 
 const categoryIcons: Record<Task['category'], string> = {
@@ -52,12 +51,10 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
   const { start } = useAppTimer();
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showActions, setShowActions] = useState<'left' | 'right' | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleComplete = async () => {
     await toggleComplete(task.id);
-    setShowActions(null);
   };
 
   const handleDelete = async () => {
@@ -69,10 +66,9 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
 
   const handleAlarmSchedule = () => {
     onAlarmSchedule?.(task);
-    setShowActions(null);
   };
 
-  const { offsetX, isSwiping, direction, handlers, triggerHaptic } = useSwipeGesture({
+  const { offsetX, isSwiping, direction } = useSwipeGesture({
     threshold: 80,
     longSwipeThreshold: 150,
     onSwipeRight: handleComplete,
@@ -93,86 +89,79 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
   };
 
   const nextAlarm = task.alarms.find(a => a.enabled);
-
-  // Calculate swipe progress for visual feedback
   const swipeProgress = Math.min(Math.abs(offsetX) / 150, 1);
   const isLongSwipe = Math.abs(offsetX) >= 150;
+  const priority = priorityConfig[task.priority];
 
   return (
     <div 
       ref={cardRef}
       className={cn(
-        'relative overflow-hidden rounded-xl',
+        'relative overflow-hidden rounded-2xl',
         isDeleting && 'animate-fade-out'
       )}
     >
       {/* Background action indicators */}
       <div className="absolute inset-0 flex">
-        {/* Right swipe - Complete */}
         <div 
           className={cn(
-            'flex items-center justify-start pl-4 w-1/2 transition-colors',
+            'flex items-center justify-start pl-5 w-1/2 transition-colors',
             direction === 'right' && isSwiping
-              ? isLongSwipe 
-                ? 'bg-primary' 
-                : 'bg-success'
+              ? isLongSwipe ? 'bg-primary' : 'bg-success'
               : 'bg-success/20'
           )}
           style={{ opacity: direction === 'right' ? swipeProgress : 0 }}
         >
           {isLongSwipe ? (
-            <AlarmClock className="h-6 w-6 text-primary-foreground" />
+            <AlarmClock className="h-6 w-6 text-white" />
           ) : (
-            <Check className="h-6 w-6 text-success-foreground" />
+            <Check className="h-6 w-6 text-white" />
           )}
         </div>
         
-        {/* Left swipe - Delete */}
         <div 
           className={cn(
-            'flex items-center justify-end pr-4 w-1/2 transition-colors',
-            direction === 'left' && isSwiping
-              ? 'bg-destructive'
-              : 'bg-destructive/20'
+            'flex items-center justify-end pr-5 w-1/2 transition-colors',
+            direction === 'left' && isSwiping ? 'bg-destructive' : 'bg-destructive/20'
           )}
           style={{ opacity: direction === 'left' ? swipeProgress : 0 }}
         >
-          <Trash2 className="h-6 w-6 text-destructive-foreground" />
+          <Trash2 className="h-6 w-6 text-white" />
         </div>
       </div>
 
       {/* Card content */}
       <Card 
-        variant="interactive"
         className={cn(
-          'relative p-4 transition-transform duration-200 touch-pan-y',
-          task.completed && 'opacity-60',
-          !isSwiping && 'transition-all duration-300'
+          'relative p-4 touch-pan-y border-0 shadow-soft',
+          task.completed && 'opacity-50',
+          !isSwiping && 'transition-transform duration-300'
         )}
         style={{ 
           transform: `translateX(${offsetX}px)`,
-          transition: isSwiping ? 'none' : 'transform 0.3s ease-out'
+          transition: isSwiping ? 'none' : 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'
         }}
-        {...handlers}
       >
         <div className="flex items-start gap-3">
-          {/* Checkbox */}
           <div className="pt-0.5">
             <Checkbox
               checked={task.completed}
               onCheckedChange={() => toggleComplete(task.id)}
-              className="h-5 w-5 rounded-full border-2 data-[state=checked]:bg-success data-[state=checked]:border-success"
+              className={cn(
+                'h-6 w-6 rounded-full border-2 transition-all',
+                'data-[state=checked]:bg-success data-[state=checked]:border-success',
+                !task.completed && 'border-muted-foreground/30'
+              )}
             />
           </div>
 
-          {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">{categoryIcons[task.category]}</span>
+                  <span className="text-base">{categoryIcons[task.category]}</span>
                   <h3 className={cn(
-                    'font-semibold truncate text-foreground',
+                    'font-semibold text-foreground truncate',
                     task.completed && 'line-through text-muted-foreground'
                   )}>
                     {task.name}
@@ -180,50 +169,44 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
                 </div>
                 
                 {task.notes && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                  <p className="text-sm text-muted-foreground line-clamp-1 mb-2">
                     {task.notes}
                   </p>
                 )}
 
-                {/* Tags */}
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <Badge variant="secondary" className={cn('text-xs font-medium', priorityColors[task.priority])}>
-                    {task.priority}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {task.isDaily ? 'Daily' : 'Permanent'}
+                  <Badge 
+                    className={cn(
+                      'text-2xs font-semibold rounded-md border-0',
+                      priority.bg, priority.text
+                    )}
+                  >
+                    {priority.label}
                   </Badge>
                   
                   {nextAlarm && (
-                    <Badge variant="outline" className="text-xs gap-1">
-                      <Bell className="h-3 w-3" />
+                    <Badge variant="outline" className="text-2xs gap-1 rounded-md border-border/50">
+                      <Bell className="h-2.5 w-2.5" />
                       {nextAlarm.time}
                     </Badge>
                   )}
                   
                   {task.timeSpent > 0 && (
-                    <Badge variant="outline" className="text-xs gap-1">
-                      <Clock className="h-3 w-3" />
+                    <Badge variant="outline" className="text-2xs gap-1 rounded-md border-border/50">
+                      <Clock className="h-2.5 w-2.5" />
                       {formatTimeSpent(task.timeSpent)}
-                    </Badge>
-                  )}
-                  
-                  {task.pomodoroSessions > 0 && (
-                    <Badge variant="outline" className="text-xs">
-                      🍅 {task.pomodoroSessions}
                     </Badge>
                   )}
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex items-center gap-1">
                 {!task.completed && (
                   <Button 
                     variant="ghost" 
-                    size="icon-sm"
+                    size="icon"
                     onClick={handleStartTimer}
-                    className="text-primary hover:text-primary hover:bg-primary/10"
+                    className="h-8 w-8 rounded-xl text-primary hover:text-primary hover:bg-primary/10"
                   >
                     <Play className="h-4 w-4" />
                   </Button>
@@ -231,22 +214,22 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-sm">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEdit?.(task)}>
+                  <DropdownMenuContent align="end" className="rounded-xl">
+                    <DropdownMenuItem onClick={() => onEdit?.(task)} className="rounded-lg">
                       <Edit2 className="h-4 w-4 mr-2" />
                       Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleAlarmSchedule}>
+                    <DropdownMenuItem onClick={handleAlarmSchedule} className="rounded-lg">
                       <AlarmClock className="h-4 w-4 mr-2" />
                       Schedule Alarm
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={handleDelete}
-                      className="text-destructive focus:text-destructive"
+                      className="text-destructive focus:text-destructive rounded-lg"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete
@@ -256,11 +239,6 @@ export function SwipeableTaskCard({ task, onEdit, onAlarmSchedule }: SwipeableTa
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Swipe hint on first render */}
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-2xs text-muted-foreground opacity-50">
-          ← swipe →
         </div>
       </Card>
     </div>

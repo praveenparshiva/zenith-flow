@@ -50,52 +50,49 @@ export function InteractiveWeekCalendar({
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex items-center justify-between w-full bg-muted/30 rounded-xl p-2">
       {days.map((day) => (
         <button
           key={day.date}
           onClick={() => handleToggle(day.date, day.isLocked)}
           disabled={disabled || day.isLocked}
           className={cn(
-            'flex flex-col items-center gap-0.5 p-1 rounded-lg transition-all duration-200',
+            'flex flex-col items-center gap-1 p-1.5 rounded-xl transition-all duration-300',
             'flex-1 min-w-0 touch-manipulation',
-            day.isToday && 'ring-1 ring-primary/50 bg-primary/5',
-            day.isToday && !disabled && 'hover:bg-primary/10 active:scale-95',
-            day.isLocked && 'cursor-not-allowed'
+            day.isToday && 'bg-card shadow-soft',
+            day.isToday && !disabled && 'hover:scale-105 active:scale-95',
+            day.isLocked && !day.isToday && 'cursor-not-allowed'
           )}
         >
           <span className={cn(
             'text-2xs font-medium uppercase',
-            day.isToday ? 'text-primary font-semibold' : 'text-muted-foreground/60'
+            day.isToday ? 'text-primary font-bold' : 'text-muted-foreground/60'
           )}>
             {day.dayName.charAt(0)}
           </span>
           <div
             className={cn(
-              'w-6 h-6 rounded-md flex items-center justify-center transition-all duration-200',
-              'text-2xs font-medium',
+              'w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300',
+              'text-2xs font-semibold',
               day.completed
-                ? 'text-primary-foreground shadow-sm'
+                ? 'text-white shadow-md'
                 : day.isToday
-                  ? 'bg-muted text-foreground border border-dashed border-primary/40'
-                  : 'bg-muted/50 text-muted-foreground/50'
+                  ? 'bg-primary/10 text-primary border-2 border-dashed border-primary/30'
+                  : 'bg-muted/50 text-muted-foreground/40'
             )}
             style={{ 
               backgroundColor: day.completed ? habitColor : undefined,
-              boxShadow: day.completed ? `0 2px 6px ${habitColor}40` : undefined,
-              opacity: day.isLocked && !day.completed ? 0.6 : 1
+              boxShadow: day.completed ? `0 2px 8px ${habitColor}50` : undefined,
             }}
           >
             {day.completed ? (
-              <Check className="h-3 w-3" />
+              <Check className="h-3.5 w-3.5" />
             ) : (
-              <span className={day.isLocked ? 'text-muted-foreground/40' : ''}>
-                {day.dayNumber}
-              </span>
+              <span>{day.dayNumber}</span>
             )}
           </div>
           {day.isToday && !day.completed && (
-            <span className="text-[7px] text-primary font-medium leading-none">Today</span>
+            <span className="text-[8px] text-primary font-semibold">Today</span>
           )}
         </button>
       ))}

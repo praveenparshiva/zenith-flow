@@ -12,20 +12,17 @@ export function HabitStatsBar({ currentStreak, longestStreak, weeklyCompletion }
     {
       icon: Flame,
       value: `${currentStreak}d`,
-      color: 'text-warning',
-      bgColor: 'bg-warning/10',
+      gradient: 'gradient-warm',
     },
     {
       icon: Trophy,
       value: `${longestStreak}d`,
-      color: 'text-success',
-      bgColor: 'bg-success/10',
+      gradient: 'gradient-success',
     },
     {
       icon: TrendingUp,
       value: `${Math.round(weeklyCompletion)}%`,
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
+      gradient: 'gradient-primary',
     },
   ];
 
@@ -35,12 +32,12 @@ export function HabitStatsBar({ currentStreak, longestStreak, weeklyCompletion }
         <div
           key={i}
           className={cn(
-            'flex items-center gap-1 px-1.5 py-0.5 rounded-md',
-            stat.bgColor
+            'flex items-center gap-1 px-2 py-1 rounded-lg',
+            stat.gradient
           )}
         >
-          <stat.icon className={cn('h-2.5 w-2.5', stat.color)} />
-          <span className="text-2xs font-semibold text-foreground">{stat.value}</span>
+          <stat.icon className="h-3 w-3 text-white" />
+          <span className="text-2xs font-bold text-white">{stat.value}</span>
         </div>
       ))}
     </div>

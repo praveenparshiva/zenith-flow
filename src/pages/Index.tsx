@@ -46,24 +46,28 @@ export default function Dashboard() {
       
       <div className="px-4 pb-24 space-y-4">
         {/* Quick Stats */}
-        <QuickStats />
+        <div className="animate-card-enter stagger-1">
+          <QuickStats />
+        </div>
 
         {/* Upcoming Alarms */}
-        <UpcomingAlarms />
+        <div className="animate-card-enter stagger-2">
+          <UpcomingAlarms />
+        </div>
 
         {/* Today's Tasks */}
-        <Card>
+        <Card className="animate-card-enter stagger-3">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CardTitle className="text-base font-semibold">Today's Tasks</CardTitle>
+                <CardTitle>Today's Tasks</CardTitle>
                 {completedTodayCount > 0 && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success font-medium">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-success/15 text-success font-semibold">
                     {completedTodayCount} done
                   </span>
                 )}
               </div>
-              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-primary rounded-xl">
                 <Link to="/tasks" className="flex items-center gap-1">
                   View All
                   <ChevronRight className="h-4 w-4" />
@@ -80,8 +84,10 @@ export default function Dashboard() {
               </div>
             ) : pendingDailyTasks.length > 0 ? (
               <div className="space-y-3">
-                {pendingDailyTasks.map((task) => (
-                  <SwipeableTaskCard key={task.id} task={task} />
+                {pendingDailyTasks.map((task, index) => (
+                  <div key={task.id} className="animate-slide-in-right" style={{ animationDelay: `${index * 0.05}s` }}>
+                    <SwipeableTaskCard task={task} />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -92,7 +98,7 @@ export default function Dashboard() {
                   ? "You've completed all your daily tasks" 
                   : 'Add your first daily task'}
                 action={
-                  <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" size="sm" asChild className="rounded-xl">
                     <Link to="/tasks">
                       <Plus className="h-4 w-4 mr-1" />
                       {dailyTasks.length > 0 ? 'Add More' : 'Add Task'}
@@ -106,11 +112,11 @@ export default function Dashboard() {
         </Card>
 
         {/* Today's Habits */}
-        <Card>
+        <Card className="animate-card-enter stagger-4">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Today's Habits</CardTitle>
-              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-foreground">
+              <CardTitle>Today's Habits</CardTitle>
+              <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground hover:text-primary rounded-xl">
                 <Link to="/habits" className="flex items-center gap-1">
                   View All
                   <ChevronRight className="h-4 w-4" />
@@ -127,13 +133,14 @@ export default function Dashboard() {
               </div>
             ) : todayHabits.length > 0 ? (
               <div className="space-y-3">
-                {todayHabits.map(habit => (
-                  <EnhancedHabitCard
-                    key={habit.id}
-                    habit={habit}
-                    isCompletedToday={habit.isCompletedToday}
-                    isDueToday={habit.isDueToday}
-                  />
+                {todayHabits.map((habit, index) => (
+                  <div key={habit.id} className="animate-slide-in-right" style={{ animationDelay: `${index * 0.05}s` }}>
+                    <EnhancedHabitCard
+                      habit={habit}
+                      isCompletedToday={habit.isCompletedToday}
+                      isDueToday={habit.isDueToday}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -142,7 +149,7 @@ export default function Dashboard() {
                 title="No habits today"
                 description="Create habits to build consistency"
                 action={
-                  <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" size="sm" asChild className="rounded-xl">
                     <Link to="/habits">
                       <Plus className="h-4 w-4 mr-1" />
                       Add Habit
